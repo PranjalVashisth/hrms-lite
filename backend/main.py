@@ -7,13 +7,12 @@ import logging
 
 from core.config import settings
 from core.database import engine, Base
-from models import Employee, Attendance  # noqa: F401 — needed for metadata
+from models import Employee, Attendance  # noqa: F401
 from routers import employees_router, attendance_router, dashboard_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# ── Create tables on startup (use Alembic for migrations in prod) ──────────────
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -24,28 +23,26 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# ── CORS ───────────────────────────────────────────────────────────────────────
+# ── CORS ──────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.origins_list,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ── Routers ────────────────────────────────────────────────────────────────────
+# ── Routers ───────────────────────────────────────────────────────────────────
 app.include_router(employees_router, prefix="/api")
 app.include_router(attendance_router, prefix="/api")
 app.include_router(dashboard_router,  prefix="/api")
 
 
-# ── Global exception handlers ──────────────────────────────────────────────────
+# ── Global exception handlers ─────────────────────────────────────────────────
 @app.exception_handler(RequestValidationError)
 async def request_validation_handler(request: Request, exc: RequestValidationError):
-    """Handles FastAPI body/query/path validation errors — returns clean field-keyed errors."""
     details = {}
     for error in exc.errors():
-        # loc is a tuple like ('body', 'email') or ('body', 'employee_id')
         field = error["loc"][-1] if error["loc"] else "unknown"
         details[str(field)] = error["msg"].replace("Value error, ", "")
     return JSONResponse(
@@ -77,7 +74,6 @@ async def server_error_handler(request: Request, exc):
     return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
 
-# ── Health check ───────────────────────────────────────────────────────────────
 @app.get("/health", tags=["Health"])
 def health():
     return {"status": "ok", "version": "1.0.0"}
