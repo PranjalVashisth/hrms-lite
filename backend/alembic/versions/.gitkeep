@@ -1,0 +1,3 @@
+# Alembic auto-generates migration scripts here.
+# Run: alembic revision --autogenerate -m "init"
+#      alembic upgrade head
