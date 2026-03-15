@@ -8,9 +8,7 @@ A full-stack Human Resource Management System built with **React + JavaScript**,
 
 | Service  | URL |
 |----------|-----|
-| Frontend | *(add your Vercel URL here)* |
-| Backend  | *(add your Render URL here)* |
-| API Docs | `<backend-url>/docs` |
+| Frontend | [*(add your Vercel URL here)*](https://cerulean-chimera-3eb13d.netlify.app) |
 
 ---
 
